@@ -1,0 +1,11 @@
+---
+
+# Provision VM for kickstarting
+
+- hosts: vagrant
+  sudo: yes
+
+  tasks:
+
+    - name: Install cobbler
+      yum: state="latest" pkg="cobbler"
