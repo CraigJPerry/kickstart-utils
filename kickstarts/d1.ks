@@ -76,8 +76,8 @@ echo "HOSTNAME=\"d1.local\"" > /etc/sysconfig/network
 yum -y --skip-broken update
 yum -y install git ansible
 
-# Attempt to install ansible-pull mode, every 5 mins after reboot
-echo "*/5 * * * * root ansible-pull --purge -U https://github.com/CraigJPerry/home-network -d home-network -i hosts-production plays/install-pull-mode.yml > /tmp/install-pull-mode.cron 2>&1" > /etc/cron.d/ansible-pull-install
+# Attempt to install ansible-pull mode, every 15 mins after reboot
+echo "*/15 * * * * root ansible-pull --purge -U https://github.com/CraigJPerry/home-network -d home-network -i hosts playbooks/install-pull-mode.yml > /tmp/install-pull-mode.cron 2>&1" > /etc/cron.d/ansible-pull-install
 %end
 
 %end
