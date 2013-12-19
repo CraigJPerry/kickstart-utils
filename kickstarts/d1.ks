@@ -55,7 +55,6 @@ auth --enableshadow --passalgo=sha512
 rootpw --iscrypted $6$JSdgnAXgP16EA7MR$HQ4isREWMEgyKP3can3iaTr678f4HPgAhp3eUp7SAYBzSPevGyooLpQ0LapodSvXU27kvOJZA6Xt9M66//x5X/
 
 # Network information
-network --bootproto=dhcp --device=eth0 --activate
 # BUG: Fedora 19 manual workaround in %post below
 network --hostname=d1.local
 
