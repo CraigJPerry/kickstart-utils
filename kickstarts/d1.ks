@@ -76,7 +76,7 @@ yum -y --skip-broken update
 yum -y install git ansible
 
 # Attempt to install ansible-pull mode, every 15 mins after reboot
-echo "*/15 * * * * root ansible-pull --purge --url https://github.com/CraigJPerry/home-network --directory home-network > /tmp/install-pull-mode.cron 2>&1" > /etc/cron.d/ansible-pull-install
+echo "*/15 * * * * root ansible-pull --purge --url https://github.com/CraigJPerry/home-network --directory home-network --inventory-file hosts > /tmp/install-pull-mode.cron 2>&1" > /etc/cron.d/ansible-pull-install
 %end
 
 %end
