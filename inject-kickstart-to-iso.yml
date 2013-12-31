@@ -1,0 +1,54 @@
+---
+
+# Ansible Playbook to remaster Fedora DVD with kickstart file
+
+- hosts: localhost
+
+  vars:
+
+    # Override with -e source_iso=whatever
+    source_iso: ~/Downloads/Fedora-20-x86_64-DVD.iso
+    source_mount: /media/src-iso
+    work_dir: ~/tmp
+    iso_work: {{ work_dir }}/iso
+    kickstart: install.ks
+# TODO
+    stanza: label kickstart\n  menu label ^Kickstart {{ kickstart }}\n  menu default\n  kernel vmlinuz\n  append initrd=initrd.img inst.stage2=hd:LABEL=${_VOLUME_NAME_ISOLINUX} ks=hd:LABEL=${_VOLUME_NAME_ISOLINUX}:/${_KS_FILE} text
+
+  tasks:
+
+    - name: Install Dependencies
+      yum: state=present name="{{ item }}"
+      sudo: yes
+      with_items:
+        - genisoimage
+
+    - name: Get ISO Volume Name
+      shell: "isoinfo -d -i {{ source_iso }} | grep 'Volume id' | cut -f3- -d' '"
+      register: volume_name
+
+    - name: "Ensure source_mount {{ source_mount }} is present"
+      file: state=directory path="{{ source_mount }}"
+      sudo: yes
+
+    - name: Mount Source ISO
+      shell: "mount -o loop,ro {{ source_iso }} {{ source_mount }}"
+      sudo: yes
+
+    - name: "Create ISO Working Dir"
+      file: state=directory path="{{ iso_work }}"
+
+    - name: "Extract ISO Contents"
+      shell: "cp -a {{ source_mount }}/. {{ iso_work }}"
+      sudo: yes
+
+    - name: "Fix Permissions"
+      shell: "chown -R {{ ansible_env.UID }} {{ iso_work }}"
+      sudo: yes
+
+    - name: "Inject Kickstart File"
+      shell: "cp {{ kickstart }} {{ iso_work }}"
+
+    - name: "Patch isolinux.cfg Boot Menu"
+    shell: 'sed -i "s/^\s\+menu default//" -e "s/^label linux/{{ stanza }}\n\nlabel linux/" {{ iso_work }}/isolinux/isolinux.cfg'
+
